@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import prisma from '@/lib/prisma'
-import { authOptions } from '@/lib/auth'
+import { verifySession } from '@/lib/session'
 import { updateLabelSchema } from '@/lib/validations/message'
 
 export async function PATCH(
@@ -9,7 +8,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await verifySession()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

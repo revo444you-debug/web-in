@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { useSession } from 'next-auth/react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -47,7 +46,6 @@ type Message = {
 }
 
 export default function MessagesPage() {
-  const { data: session } = useSession()
   const [contacts, setContacts] = useState<Contact[]>([])
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [messages, setMessages] = useState<Message[]>([])

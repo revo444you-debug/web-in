@@ -6,40 +6,33 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { registerAction } from '@/app/actions/auth-actions'
 
 export default function RegisterPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [role, setRole] = useState<'ADMIN' | 'CS'>('CS')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
+    setSuccess('')
     setLoading(true)
 
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role }),
-      })
+    const formData = new FormData(e.currentTarget)
+    const result = await registerAction(null, formData)
 
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Terjadi kesalahan')
-        return
-      }
-
-      router.push('/login')
-    } catch (err) {
-      setError('Terjadi kesalahan')
-    } finally {
-      setLoading(false)
+    if (result.success && result.message) {
+      setSuccess(result.message)
+      setTimeout(() => {
+        router.push('/login')
+      }, 1500)
+    } else if (result.message) {
+      setError(result.message)
     }
+    
+    setLoading(false)
   }
 
   return (
@@ -58,17 +51,21 @@ export default function RegisterPage() {
                 {error}
               </div>
             )}
-            
+            {success && (
+              <div className="bg-green-50 text-green-700 text-sm p-3 rounded-md">
+                {success}
+              </div>
+            )}
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="nama@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -79,10 +76,9 @@ export default function RegisterPage() {
               </label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
               />
@@ -94,9 +90,9 @@ export default function RegisterPage() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
+                    name="role"
                     value="CS"
-                    checked={role === 'CS'}
-                    onChange={(e) => setRole(e.target.value as 'CS')}
+                    defaultChecked
                     className="w-4 h-4"
                   />
                   <span>Customer Service</span>
@@ -104,9 +100,8 @@ export default function RegisterPage() {
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
+                    name="role"
                     value="ADMIN"
-                    checked={role === 'ADMIN'}
-                    onChange={(e) => setRole(e.target.value as 'ADMIN')}
                     className="w-4 h-4"
                   />
                   <span>Admin</span>

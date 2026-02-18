@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import prisma from '@/lib/prisma'
-import { authOptions } from '@/lib/auth'
+import { verifySession } from '@/lib/session'
 import { sendMessageSchema } from '@/lib/validations/message'
 import { sendWhatsAppMessage } from '@/lib/whatsapp'
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await verifySession()
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
       data: {
         waMessageId: waResponse.messages[0].id,
         contactId,
-        senderId: session.user.id,
+        senderId: session.userId,
         type,
         content,
         mediaUrl,

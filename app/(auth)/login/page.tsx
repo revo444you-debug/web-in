@@ -1,43 +1,34 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { loginAction } from '@/app/actions/auth-actions'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
+    const formData = new FormData(e.currentTarget)
+    const result = await loginAction(null, formData)
 
-      if (result?.error) {
-        setError('Email atau password salah')
-      } else {
-        router.push('/dashboard/messages')
-        router.refresh()
-      }
-    } catch (err) {
-      setError('Terjadi kesalahan')
-    } finally {
-      setLoading(false)
+    if (result.success && result.role) {
+      router.push('/dashboard/messages')
+      router.refresh()
+    } else if (result.message) {
+      setError(result.message)
     }
+    
+    setLoading(false)
   }
 
   return (
@@ -56,17 +47,16 @@ export default function LoginPage() {
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="nama@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
@@ -77,10 +67,9 @@ export default function LoginPage() {
               </label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
