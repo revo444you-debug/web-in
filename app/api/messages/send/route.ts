@@ -32,6 +32,14 @@ export async function POST(req: Request) {
     })
 
     // Save to database
+    // IMPORTANT: Node.js on Windows returns WIB time even with TZ=UTC
+    // Database is in UTC, so we need to subtract 7 hours
+    const localTime = new Date()
+    const utcTime = new Date(localTime.getTime() - (7 * 60 * 60 * 1000))
+    
+    console.log('📅 Node time (WIB):', localTime.toISOString())
+    console.log('📅 Converted to UTC:', utcTime.toISOString())
+    
     const message = await prisma.message.create({
       data: {
         waMessageId: waResponse.messages[0].id,
@@ -42,7 +50,7 @@ export async function POST(req: Request) {
         mediaUrl,
         caption,
         isFromContact: false,
-        timestamp: new Date(),
+        timestamp: utcTime, // Use UTC time to match database
         status: 'SENT',
       },
       include: {

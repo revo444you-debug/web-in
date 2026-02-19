@@ -2,6 +2,16 @@ const WABA_API_URL = 'https://graph.facebook.com/v21.0'
 const PHONE_NUMBER_ID = process.env.WABA_PHONE_NUMBER_ID!
 const ACCESS_TOKEN = process.env.WABA_ACCESS_TOKEN!
 
+// Debug logging (remove in production)
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔧 WhatsApp Config:', {
+    phoneNumberId: PHONE_NUMBER_ID,
+    hasAccessToken: !!ACCESS_TOKEN,
+    tokenLength: ACCESS_TOKEN?.length || 0,
+    tokenPrefix: ACCESS_TOKEN?.substring(0, 20) + '...',
+  })
+}
+
 export async function sendWhatsAppMessage(
   to: string,
   message: {
@@ -53,6 +63,12 @@ export async function sendWhatsAppMessage(
 
   if (!response.ok) {
     const error = await response.json()
+    console.error('❌ WhatsApp API Error:', {
+      status: response.status,
+      statusText: response.statusText,
+      error,
+      tokenUsed: ACCESS_TOKEN?.substring(0, 20) + '...',
+    })
     throw new Error(`WhatsApp API Error: ${JSON.stringify(error)}`)
   }
 

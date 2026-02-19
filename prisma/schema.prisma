@@ -86,7 +86,7 @@ model Message {
   caption       String?
   status        MessageStatus @default(SENT)
   isFromContact Boolean       @default(true)
-  timestamp     DateTime
+  timestamp     DateTime      @db.Timestamptz
   createdAt     DateTime      @default(now())
 
   contact Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)

@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { getInitials, formatPhoneNumber } from '@/lib/utils'
 import { format } from 'date-fns'
+import { useRealtimeContacts } from '@/hooks/useRealtimeContacts'
 
 type Label = {
   id: string
@@ -30,24 +31,19 @@ type Contact = {
 
 export default function BoardPage() {
   const [labels, setLabels] = useState<Label[]>([])
-  const [contacts, setContacts] = useState<Contact[]>([])
   const [activeContact, setActiveContact] = useState<Contact | null>(null)
+  
+  // Use real-time hook for contacts
+  const { contacts, setContacts } = useRealtimeContacts()
 
   useEffect(() => {
     fetchLabels()
-    fetchContacts()
   }, [])
 
   const fetchLabels = async () => {
     const res = await fetch('/api/labels')
     const data = await res.json()
     setLabels(data)
-  }
-
-  const fetchContacts = async () => {
-    const res = await fetch('/api/contacts')
-    const data = await res.json()
-    setContacts(data)
   }
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -67,17 +63,28 @@ export default function BoardPage() {
     const contact = contacts.find((c) => c.id === contactId)
     if (!contact || contact.labelId === newLabelId) return
 
+    // Optimistic update - update UI immediately
+    const previousContacts = [...contacts]
+    setContacts((prev) =>
+      prev.map((c) => (c.id === contactId ? { ...c, labelId: newLabelId } : c))
+    )
+
     try {
-      await fetch(`/api/contacts/${contactId}/label`, {
+      // Send update to server
+      const res = await fetch(`/api/contacts/${contactId}/label`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ labelId: newLabelId }),
       })
 
-      setContacts((prev) =>
-        prev.map((c) => (c.id === contactId ? { ...c, labelId: newLabelId } : c))
-      )
+      if (!res.ok) {
+        // Revert on error
+        setContacts(previousContacts)
+        console.error('Update label error')
+      }
     } catch (error) {
+      // Revert on error
+      setContacts(previousContacts)
       console.error('Update label error:', error)
     }
   }

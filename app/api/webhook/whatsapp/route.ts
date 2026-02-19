@@ -74,11 +74,15 @@ export async function POST(req: Request) {
         }
 
         // Simpan message
+        // WhatsApp sends timestamp in Unix seconds (UTC)
+        // Store in UTC (standard practice like WhatsApp)
+        const waTimestampUTC = new Date(parseInt(message.timestamp) * 1000)
+        
         let messageData: any = {
           waMessageId: message.id,
           contactId: contact.id,
           isFromContact: true,
-          timestamp: new Date(parseInt(message.timestamp) * 1000),
+          timestamp: waTimestampUTC, // Store in UTC
           status: 'DELIVERED',
         }
 

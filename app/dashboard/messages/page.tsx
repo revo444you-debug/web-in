@@ -10,6 +10,8 @@ import { Send, Image, Video } from 'lucide-react'
 import { getInitials, formatPhoneNumber } from '@/lib/utils'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
+import { useRealtimeContacts } from '@/hooks/useRealtimeContacts'
+import { useRealtimeMessages } from '@/hooks/useRealtimeMessages'
 
 type Contact = {
   id: string
@@ -46,13 +48,15 @@ type Message = {
 }
 
 export default function MessagesPage() {
-  const [contacts, setContacts] = useState<Contact[]>([])
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
-  const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [labels, setLabels] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Use real-time hooks instead of polling
+  const { contacts, setContacts } = useRealtimeContacts()
+  const { messages, setMessages } = useRealtimeMessages(selectedContact?.id || null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -63,41 +67,8 @@ export default function MessagesPage() {
   }, [messages])
 
   useEffect(() => {
-    fetchContacts()
     fetchLabels()
-
-    // Auto-refresh contacts setiap 5 detik
-    const intervalId = setInterval(() => {
-      fetchContacts()
-    }, 5000)
-
-    return () => clearInterval(intervalId)
   }, [])
-
-  useEffect(() => {
-    if (selectedContact) {
-      fetchMessages(selectedContact.id)
-
-      // Auto-refresh messages setiap 3 detik
-      const intervalId = setInterval(() => {
-        fetchMessages(selectedContact.id)
-      }, 3000)
-
-      return () => clearInterval(intervalId)
-    }
-  }, [selectedContact])
-
-  const fetchContacts = async () => {
-    const res = await fetch('/api/contacts')
-    const data = await res.json()
-    setContacts(data)
-  }
-
-  const fetchMessages = async (contactId: string) => {
-    const res = await fetch(`/api/messages?contactId=${contactId}`)
-    const data = await res.json()
-    setMessages(data)
-  }
 
   const fetchLabels = async () => {
     const res = await fetch('/api/labels')
@@ -110,6 +81,23 @@ export default function MessagesPage() {
     if (!newMessage.trim() || !selectedContact) return
 
     setLoading(true)
+    
+    // Optimistic update - add message to UI immediately
+    const optimisticMessage: Message = {
+      id: `temp-${Date.now()}`,
+      content: newMessage,
+      type: 'TEXT',
+      mediaUrl: null,
+      caption: null,
+      timestamp: new Date().toISOString(),
+      isFromContact: false,
+      sender: null,
+    }
+    
+    setMessages((prev) => [...prev, optimisticMessage])
+    const messageToSend = newMessage
+    setNewMessage('') // Clear input immediately
+
     try {
       const res = await fetch('/api/messages/send', {
         method: 'POST',
@@ -117,15 +105,21 @@ export default function MessagesPage() {
         body: JSON.stringify({
           contactId: selectedContact.id,
           type: 'TEXT',
-          content: newMessage,
+          content: messageToSend,
         }),
       })
 
-      if (res.ok) {
-        setNewMessage('')
-        fetchMessages(selectedContact.id)
+      if (!res.ok) {
+        // Remove optimistic message on error
+        setMessages((prev) => prev.filter((m) => m.id !== optimisticMessage.id))
+        setNewMessage(messageToSend) // Restore message
+        console.error('Send message failed')
       }
+      // Real-time hook will replace optimistic message with real one
     } catch (error) {
+      // Remove optimistic message on error
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticMessage.id))
+      setNewMessage(messageToSend) // Restore message
       console.error('Send message error:', error)
     } finally {
       setLoading(false)
@@ -133,20 +127,50 @@ export default function MessagesPage() {
   }
 
   const handleChangeLabel = async (contactId: string, labelId: string) => {
+    // Find the new label info
+    const newLabel = labels.find((l) => l.id === labelId)
+    if (!newLabel) return
+
+    // Optimistic update - update UI immediately
+    const previousContacts = [...contacts]
+    const previousSelectedContact = selectedContact
+
+    // Update contacts list
+    setContacts((prev) =>
+      prev.map((c) =>
+        c.id === contactId
+          ? { ...c, labelId, label: { id: newLabel.id, name: newLabel.name, color: newLabel.color } }
+          : c
+      )
+    )
+
+    // Update selected contact if it's the one being changed
+    if (selectedContact?.id === contactId) {
+      setSelectedContact({
+        ...selectedContact,
+        labelId,
+        label: { id: newLabel.id, name: newLabel.name, color: newLabel.color },
+      })
+    }
+
     try {
-      await fetch(`/api/contacts/${contactId}/label`, {
+      const res = await fetch(`/api/contacts/${contactId}/label`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ labelId }),
       })
-      fetchContacts()
-      if (selectedContact?.id === contactId) {
-        const updated = contacts.find((c) => c.id === contactId)
-        if (updated) {
-          setSelectedContact({ ...updated })
-        }
+
+      if (!res.ok) {
+        // Revert on error
+        setContacts(previousContacts)
+        setSelectedContact(previousSelectedContact)
+        console.error('Change label failed')
       }
+      // Real-time hook will sync with other tabs
     } catch (error) {
+      // Revert on error
+      setContacts(previousContacts)
+      setSelectedContact(previousSelectedContact)
       console.error('Change label error:', error)
     }
   }

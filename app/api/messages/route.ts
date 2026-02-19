@@ -30,8 +30,19 @@ export async function GET(req: Request) {
           },
         },
       },
-      orderBy: { timestamp: 'asc' },
+      orderBy: [
+        { timestamp: 'asc' },
+        { createdAt: 'asc' },
+      ],
     })
+
+    // Debug: Log timestamps
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📋 Messages fetched:', messages.length)
+      messages.forEach((msg, i) => {
+        console.log(`${i + 1}. [${msg.timestamp.toISOString()}] ${msg.isFromContact ? 'Contact' : 'You'}: ${msg.content?.substring(0, 20)}`)
+      })
+    }
 
     return NextResponse.json(messages)
   } catch (error) {
