@@ -1,0 +1,43 @@
+========================================
+QUICK FIX - Copy Paste Command Ini
+========================================
+
+1. Buka Command Prompt (CMD)
+   - Tekan Windows + R
+   - Ketik: cmd
+   - Enter
+
+2. Navigate ke folder project:
+   cd D:\coding\template
+
+3. Copy paste command ini (satu per satu):
+
+   rmdir /s /q .next
+
+   npx prisma generate
+
+   npm run dev
+
+4. Tunggu server start, lalu buka browser:
+   http://localhost:3000
+
+5. Untuk install PWA:
+   - Tunggu 3 detik
+   - Klik banner "Install" yang muncul
+   - ATAU klik icon + di address bar
+
+========================================
+JIKA MASIH ERROR DATABASE
+========================================
+
+Buka file .env, ubah baris DATABASE_URL jadi:
+
+DATABASE_URL='postgresql://postgres.lnrrghaejoyguikjdmgs:T8N54W9c7MtsjC7e@aws-1-ap-south-1.pooler.supabase.com:5432/postgres'
+
+(Ganti :6543 jadi :5432)
+
+Save, lalu restart server (Ctrl+C, npm run dev)
+
+========================================
+DONE!
+========================================

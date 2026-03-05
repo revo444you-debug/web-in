@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Dashboard Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+        }
+        
+        h1 {
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        p {
+            color: #6b7280;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .button:hover {
+            background: #2563eb;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef3c7;
+            border-radius: 8px;
+            color: #92400e;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>Anda Sedang Offline</h1>
+        <p>
+            Sepertinya koneksi internet Anda terputus. 
+            Beberapa fitur mungkin tidak tersedia saat offline.
+        </p>
+        <button class="button" onclick="location.reload()">
+            Coba Lagi
+        </button>
+        <div class="status" id="status">
+            Memeriksa koneksi...
+        </div>
+    </div>
+
+    <script>
+        // Check connection status
+        function updateStatus() {
+            const status = document.getElementById('status');
+            if (navigator.onLine) {
+                status.style.background = '#d1fae5';
+                status.style.color = '#065f46';
+                status.textContent = '✓ Koneksi tersedia! Klik "Coba Lagi" untuk reload.';
+            } else {
+                status.style.background = '#fef3c7';
+                status.style.color = '#92400e';
+                status.textContent = '✗ Masih offline. Cek koneksi internet Anda.';
+            }
+        }
+
+        // Update status every 3 seconds
+        setInterval(updateStatus, 3000);
+        updateStatus();
+
+        // Listen for online event
+        window.addEventListener('online', () => {
+            updateStatus();
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        });
+
+        window.addEventListener('offline', updateStatus);
+    </script>
+</body>
+</html>

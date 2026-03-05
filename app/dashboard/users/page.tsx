@@ -3,6 +3,7 @@ import { verifySession } from '@/lib/session'
 import prisma from '@/lib/prisma'
 import CreateUserForm from './CreateUserForm'
 import UserList from './UserList'
+import { DownloadButton } from '@/components/ui/download-button'
 
 export default async function UsersPage() {
   const session = await verifySession()
@@ -25,7 +26,23 @@ export default async function UsersPage() {
   return (
     <div className="p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">User Management</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">User Management</h1>
+          <div className="flex gap-2">
+            <DownloadButton
+              endpoint="/api/export/users"
+              format="json"
+              label="Export JSON"
+              variant="outline"
+            />
+            <DownloadButton
+              endpoint="/api/export/users"
+              format="csv"
+              label="Export CSV"
+              variant="outline"
+            />
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Create User Form */}

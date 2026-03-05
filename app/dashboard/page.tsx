@@ -1,6 +1,7 @@
 import { verifySession } from '@/lib/session'
 import prisma from '@/lib/prisma'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DownloadButton } from '@/components/ui/download-button'
 import Image from 'next/image'
 
 export default async function DashboardPage() {
@@ -9,6 +10,23 @@ export default async function DashboardPage() {
   const profile = await prisma.profile.findUnique({
     where: { userId: session!.userId },
   })
+
+  // Get statistics for admin
+  let stats = null;
+  if (session?.role === 'ADMIN') {
+    const totalUsers = await prisma.user.count();
+    const totalProfiles = await prisma.profile.count();
+    const profilesWithPhoto = await prisma.profile.count({
+      where: { fotoProfil: { not: null } },
+    });
+
+    stats = {
+      totalUsers,
+      totalProfiles,
+      profilesWithPhoto,
+      completionRate: totalUsers > 0 ? ((totalProfiles / totalUsers) * 100).toFixed(0) : 0,
+    };
+  }
 
   return (
     <div className="p-8">
@@ -63,6 +81,61 @@ export default async function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+        
+        {/* Admin Statistics */}
+        {session?.role === 'ADMIN' && stats && (
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-600">Total Users</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats.totalUsers}</div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-600">Profiles Completed</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats.totalProfiles}</div>
+                <p className="text-xs text-gray-500 mt-1">{stats.completionRate}% completion</p>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-gray-600">With Photos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats.profilesWithPhoto}</div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Download Report Button for Admin */}
+        {session?.role === 'ADMIN' && (
+          <div className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>System Report</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-4">
+                  Download laporan lengkap sistem termasuk statistik dan distribusi data.
+                </p>
+                <DownloadButton
+                  endpoint="/api/export/report"
+                  format="json"
+                  label="Download System Report"
+                  variant="default"
+                />
+              </CardContent>
+            </Card>
+          </div>
+        )}
         
         <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-blue-900 mb-2">

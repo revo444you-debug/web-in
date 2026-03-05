@@ -13,6 +13,9 @@ Template sederhana untuk aplikasi dengan authentication (login/register) dan das
 - ✅ Supabase Storage untuk upload foto
 - ✅ Prisma ORM
 - ✅ Tailwind CSS + shadcn/ui components
+- ✅ AI Assistant dengan Groq API (Llama 3.3 70B)
+- ✅ Download/Export data (JSON, CSV, TXT)
+- ✅ Progressive Web App (PWA) - Bisa diinstall di laptop/mobile
 
 ## Tech Stack
 
@@ -73,6 +76,9 @@ SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
 NODE_ENV="development"
 SESSION_SECRET="your-super-secret-key-min-32-characters"
 REGISTRATION_TOKEN="your-registration-token"
+
+# AI Assistant (dari Groq Console)
+GROQ_API_KEY="your-groq-api-key"
 ```
 
 **Generate SESSION_SECRET:**
@@ -84,6 +90,13 @@ openssl rand -base64 32
 ```bash
 openssl rand -hex 16
 ```
+
+**Get GROQ_API_KEY:**
+1. Buka [Groq Console](https://console.groq.com)
+2. Sign up atau login
+3. Buka **API Keys** di sidebar
+4. Klik **Create API Key**
+5. Copy API key yang dihasilkan
 
 ### 4. Setup Database & Storage
 
@@ -383,6 +396,9 @@ bunx prisma generate
 **Feature Guides:**
 - [docs/USER_MANAGEMENT_GUIDE.md](./docs/USER_MANAGEMENT_GUIDE.md) - User management
 - [docs/PHOTO_UPLOAD_GUIDE.md](./docs/PHOTO_UPLOAD_GUIDE.md) - Photo upload guide
+- [docs/AI_ASSISTANT_GUIDE.md](./docs/AI_ASSISTANT_GUIDE.md) - AI Assistant setup & usage
+- [docs/DOWNLOAD_EXPORT_GUIDE.md](./docs/DOWNLOAD_EXPORT_GUIDE.md) - Download & export data
+- [docs/PWA_INSTALLATION_GUIDE.md](./docs/PWA_INSTALLATION_GUIDE.md) - Install sebagai aplikasi (PWA)
 - [docs/PROJECT_STRUCTURE.md](./docs/PROJECT_STRUCTURE.md) - Project structure
 - [docs/DATABASE_BEST_PRACTICES.md](./docs/DATABASE_BEST_PRACTICES.md) - Database best practices
 - [docs/FAQ.md](./docs/FAQ.md) - Frequently asked questions

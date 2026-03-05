@@ -1,8 +1,10 @@
 import { redirect } from 'next/navigation'
 import { verifySession } from '@/lib/session'
 import { logoutAction } from '@/app/actions/auth-actions'
+import { safeFindUnique } from '@/lib/prisma-safe'
 import prisma from '@/lib/prisma'
 import Image from 'next/image'
+import { ChatAssistant } from '@/components/ui/chat-assistant'
 
 export default async function DashboardLayout({
   children,
@@ -15,9 +17,11 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.userId },
-  })
+  // Use safe wrapper to handle PgBouncer errors
+  const profile = await safeFindUnique(
+    prisma.profile,
+    { where: { userId: session.userId } }
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -135,6 +139,7 @@ export default async function DashboardLayout({
         </aside>
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
+      <ChatAssistant />
     </div>
   )
 }
