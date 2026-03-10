@@ -31,16 +31,12 @@ export async function GET(request: NextRequest) {
       email: user.email,
       role: user.role,
       createdAt: user.createdAt.toISOString(),
-      nama: user.profile?.nama || '',
-      nim: user.profile?.nim || '',
-      prodi: user.profile?.prodi || '',
-      angkatan: user.profile?.angkatan || '',
-      nomorTelepon: user.profile?.nomorTelepon || '',
+      fotoProfil: user.profile?.fotoProfil || '',
     }));
 
     if (format === 'csv') {
       // Generate CSV
-      const headers = ['ID', 'Email', 'Role', 'Created At', 'Nama', 'NIM', 'Prodi', 'Angkatan', 'Nomor Telepon'];
+      const headers = ['ID', 'Email', 'Role', 'Created At', 'Foto Profil'];
       const csvRows = [
         headers.join(','),
         ...exportData.map(user => [
@@ -48,11 +44,7 @@ export async function GET(request: NextRequest) {
           `"${user.email}"`,
           user.role,
           user.createdAt,
-          `"${user.nama}"`,
-          `"${user.nim}"`,
-          `"${user.prodi}"`,
-          `"${user.angkatan}"`,
-          `"${user.nomorTelepon}"`,
+          `"${user.fotoProfil}"`,
         ].join(','))
       ];
 

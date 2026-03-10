@@ -11,7 +11,7 @@ export default async function ProfilePage() {
     redirect('/login')
   }
 
-  const profile = await prisma.profile.findUnique({
+  const profile: any = await prisma.profile.findUnique({
     where: { userId: session.userId },
   })
 

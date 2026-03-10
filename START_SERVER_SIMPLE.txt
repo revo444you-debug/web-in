@@ -1,0 +1,56 @@
+========================================
+SOLUSI PALING MUDAH - SKIP PRISMA GENERATE
+========================================
+
+JANGAN jalankan "npx prisma generate"!
+Langsung start server saja.
+
+========================================
+LANGKAH-LANGKAH:
+========================================
+
+1. Buka Command Prompt (CMD)
+
+2. Stop semua Node process:
+   
+   taskkill /F /IM node.exe
+
+3. Tunggu 5 detik
+
+4. Navigate ke project:
+   
+   cd D:\coding\template
+
+5. Langsung start server (SKIP prisma generate):
+   
+   npm run dev
+
+========================================
+SELESAI!
+========================================
+
+Server akan start tanpa perlu regenerate Prisma.
+
+Buka browser: http://localhost:3000
+
+========================================
+INSTALL PWA:
+========================================
+
+1. Buka http://localhost:3000 di Chrome/Edge
+2. Login
+3. Tunggu 3-5 detik
+4. Klik banner "Install" yang muncul
+5. ATAU klik icon + di address bar
+
+========================================
+JIKA MASIH ERROR SAAT npm run dev:
+========================================
+
+RESTART KOMPUTER, lalu:
+
+1. Buka Command Prompt
+2. cd D:\coding\template
+3. npm run dev
+
+========================================

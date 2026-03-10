@@ -1,0 +1,52 @@
+========================================
+CLEAR CACHE & START SERVER
+========================================
+
+Error TypeScript masih muncul karena cache.
+Kita perlu clear semua cache.
+
+========================================
+LANGKAH-LANGKAH:
+========================================
+
+1. Stop server jika running (Ctrl+C)
+
+2. Hapus semua cache:
+
+   rmdir /s /q .next
+   rmdir /s /q node_modules\.cache
+   del /f /q tsconfig.tsbuildinfo
+
+3. Start server:
+
+   npm run dev
+
+========================================
+ATAU COPY PASTE COMMAND INI:
+========================================
+
+rmdir /s /q .next && rmdir /s /q node_modules\.cache && del /f /q tsconfig.tsbuildinfo && npm run dev
+
+========================================
+JIKA MASIH ERROR:
+========================================
+
+Hapus node_modules dan install ulang:
+
+1. rmdir /s /q node_modules
+2. rmdir /s /q .next
+3. npm install
+4. npm run dev
+
+========================================
+SETELAH SERVER RUNNING:
+========================================
+
+Buka: http://localhost:3000
+
+Install PWA:
+1. Tunggu 3-5 detik
+2. Klik banner "Install"
+3. SELESAI!
+
+========================================

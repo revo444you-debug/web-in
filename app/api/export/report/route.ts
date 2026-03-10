@@ -30,49 +30,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Get prodi distribution - handle potential null values
-    let prodiDistribution = [];
-    try {
-      const prodiData = await prisma.profile.groupBy({
-        by: ['prodi'],
-        _count: {
-          prodi: true,
-        },
-        where: {
-          prodi: {
-            not: null,
-            not: '',
-          },
-        },
-      });
-      prodiDistribution = prodiData;
-    } catch (error) {
-      console.log('Prodi distribution error:', error);
-    }
-
-    // Get angkatan distribution - handle potential null values
-    let angkatanDistribution = [];
-    try {
-      const angkatanData = await prisma.profile.groupBy({
-        by: ['angkatan'],
-        _count: {
-          angkatan: true,
-        },
-        where: {
-          angkatan: {
-            not: null,
-            not: '',
-          },
-        },
-        orderBy: {
-          angkatan: 'desc',
-        },
-      });
-      angkatanDistribution = angkatanData;
-    } catch (error) {
-      console.log('Angkatan distribution error:', error);
-    }
-
+    // Profile statistics only (no prodi/angkatan since fields don't exist)
     const report = {
       generatedAt: new Date().toISOString(),
       generatedBy: session.email,
@@ -88,16 +46,6 @@ export async function GET(request: NextRequest) {
           withoutPhoto: totalProfiles - profilesWithPhoto,
           completionRate: totalUsers > 0 ? ((totalProfiles / totalUsers) * 100).toFixed(2) + '%' : '0%',
         },
-      },
-      distributions: {
-        byProdi: prodiDistribution.map(item => ({
-          prodi: item.prodi || 'Tidak diisi',
-          count: item._count.prodi,
-        })),
-        byAngkatan: angkatanDistribution.map(item => ({
-          angkatan: item.angkatan || 'Tidak diisi',
-          count: item._count.angkatan,
-        })),
       },
     };
 

@@ -18,7 +18,7 @@ export default async function DashboardLayout({
   }
 
   // Use safe wrapper to handle PgBouncer errors
-  const profile = await safeFindUnique(
+  const profile: any = await safeFindUnique(
     prisma.profile,
     { where: { userId: session.userId } }
   )

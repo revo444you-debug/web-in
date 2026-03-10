@@ -1,0 +1,99 @@
+========================================
+FIX: EPERM Error - File Sedang Digunakan
+========================================
+
+MASALAH: 
+File Prisma sedang digunakan oleh proses lain
+
+SOLUSI:
+
+========================================
+STEP 1: Stop Semua Proses Node.js
+========================================
+
+Buka Command Prompt (CMD) sebagai Administrator:
+1. Tekan Windows + X
+2. Pilih "Command Prompt (Admin)" atau "Terminal (Admin)"
+3. Klik Yes jika ada UAC prompt
+
+Jalankan command ini:
+
+taskkill /F /IM node.exe
+
+(Ini akan stop semua proses Node.js)
+
+========================================
+STEP 2: Tunggu 5 Detik
+========================================
+
+Tunggu beberapa detik agar file tidak locked lagi.
+
+========================================
+STEP 3: Navigate ke Project
+========================================
+
+cd D:\coding\template
+
+========================================
+STEP 4: Clear Cache
+========================================
+
+rmdir /s /q .next
+
+========================================
+STEP 5: Regenerate Prisma
+========================================
+
+npx prisma generate
+
+========================================
+STEP 6: Start Server
+========================================
+
+npm run dev
+
+========================================
+DONE!
+========================================
+
+Buka browser: http://localhost:3000
+
+========================================
+JIKA MASIH ERROR EPERM
+========================================
+
+OPTION 1: Restart Komputer
+- Restart komputer Anda
+- Buka Command Prompt
+- cd D:\coding\template
+- npx prisma generate
+- npm run dev
+
+OPTION 2: Hapus node_modules
+- taskkill /F /IM node.exe
+- rmdir /s /q node_modules
+- rmdir /s /q .next
+- npm install
+- npm run dev
+
+OPTION 3: Gunakan Direct Connection (Skip Prisma Generate)
+- Buka file .env
+- Ubah DATABASE_URL:
+  
+  DATABASE_URL='postgresql://postgres.lnrrghaejoyguikjdmgs:T8N54W9c7MtsjC7e@aws-1-ap-south-1.pooler.supabase.com:5432/postgres'
+
+- Save
+- npm run dev (langsung, tanpa prisma generate)
+
+========================================
+QUICK COMMANDS (Copy Paste Semua)
+========================================
+
+taskkill /F /IM node.exe
+timeout /t 5
+cd D:\coding\template
+rmdir /s /q .next
+npx prisma generate
+npm run dev
+
+========================================

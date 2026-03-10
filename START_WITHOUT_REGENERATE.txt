@@ -1,0 +1,64 @@
+========================================
+START SERVER TANPA REGENERATE PRISMA
+========================================
+
+Jika Prisma generate error, gunakan cara ini:
+
+========================================
+STEP 1: Stop Semua Node Process
+========================================
+
+taskkill /F /IM node.exe
+
+========================================
+STEP 2: Gunakan Direct Database Connection
+========================================
+
+1. Buka file: .env
+
+2. Cari baris DATABASE_URL
+
+3. Ubah dari:
+   DATABASE_URL='postgresql://postgres.lnrrghaejoyguikjdmgs:T8N54W9c7MtsjC7e@aws-1-ap-south-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1'
+
+4. Jadi:
+   DATABASE_URL='postgresql://postgres.lnrrghaejoyguikjdmgs:T8N54W9c7MtsjC7e@aws-1-ap-south-1.pooler.supabase.com:5432/postgres'
+
+5. Save file (Ctrl+S)
+
+========================================
+STEP 3: Clear Cache
+========================================
+
+rmdir /s /q .next
+
+========================================
+STEP 4: Start Server (Tanpa Prisma Generate)
+========================================
+
+npm run dev
+
+========================================
+DONE!
+========================================
+
+Server akan start tanpa perlu regenerate Prisma.
+Buka: http://localhost:3000
+
+========================================
+UNTUK INSTALL PWA
+========================================
+
+1. Buka http://localhost:3000 di Chrome/Edge
+2. Login ke dashboard
+3. Tunggu 3-5 detik
+4. Banner "Install Aplikasi" akan muncul
+5. Klik "Install"
+
+ATAU:
+
+1. Lihat icon + di address bar (kanan atas)
+2. Klik icon tersebut
+3. Klik "Install"
+
+========================================

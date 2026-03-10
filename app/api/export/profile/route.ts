@@ -36,11 +36,6 @@ export async function GET(request: NextRequest) {
       role: user.role,
       createdAt: user.createdAt.toISOString(),
       profile: {
-        nama: user.profile?.nama || '',
-        nim: user.profile?.nim || '',
-        prodi: user.profile?.prodi || '',
-        angkatan: user.profile?.angkatan || '',
-        nomorTelepon: user.profile?.nomorTelepon || '',
         fotoProfil: user.profile?.fotoProfil || '',
       },
     };
@@ -57,11 +52,6 @@ Tanggal Daftar: ${new Date(exportData.createdAt).toLocaleString('id-ID')}
 INFORMASI PROFIL
 ================
 
-Nama: ${exportData.profile.nama}
-NIM: ${exportData.profile.nim}
-Prodi: ${exportData.profile.prodi}
-Angkatan: ${exportData.profile.angkatan}
-Nomor Telepon: ${exportData.profile.nomorTelepon}
 Foto Profil: ${exportData.profile.fotoProfil || 'Tidak ada'}
 
 Exported at: ${new Date().toLocaleString('id-ID')}`;

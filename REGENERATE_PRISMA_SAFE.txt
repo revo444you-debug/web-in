@@ -1,0 +1,76 @@
+========================================
+REGENERATE PRISMA CLIENT - SAFE METHOD
+========================================
+
+Error: fotoProfil tidak ada di type {}
+Artinya: Prisma Client belum di-generate
+
+========================================
+SOLUSI:
+========================================
+
+1. RESTART KOMPUTER DULU
+   (Ini penting untuk release file locks)
+
+2. Setelah restart, buka Command Prompt
+
+3. Navigate ke project:
+   cd D:\coding\template
+
+4. Hapus Prisma cache:
+   rmdir /s /q node_modules\.prisma
+   rmdir /s /q node_modules\@prisma
+
+5. Regenerate Prisma:
+   npx prisma generate
+
+6. Clear Next.js cache:
+   rmdir /s /q .next
+
+7. Start server:
+   npm run dev
+
+========================================
+ATAU GUNAKAN COMMAND INI (Setelah restart):
+========================================
+
+cd D:\coding\template && rmdir /s /q node_modules\.prisma && rmdir /s /q node_modules\@prisma && npx prisma generate && rmdir /s /q .next && npm run dev
+
+========================================
+JIKA npx prisma generate ERROR EPERM:
+========================================
+
+Berarti file masih terkunci.
+
+SOLUSI ALTERNATIF:
+1. Hapus seluruh node_modules
+2. Install ulang
+
+Command:
+cd D:\coding\template
+rmdir /s /q node_modules
+rmdir /s /q .next
+npm install
+npm run dev
+
+========================================
+SETELAH SERVER RUNNING:
+========================================
+
+Buka: http://localhost:3000
+
+Install PWA:
+1. Tunggu 3-5 detik
+2. Klik "Install"
+3. SELESAI!
+
+========================================
+CATATAN PENTING:
+========================================
+
+- HARUS restart komputer dulu
+- Jangan skip langkah restart
+- File Prisma harus di-release dulu
+- Setelah restart baru bisa regenerate
+
+========================================

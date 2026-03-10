@@ -1,0 +1,75 @@
+========================================
+SOLUSI TERAKHIR - HAPUS & INSTALL ULANG
+========================================
+
+File Prisma masih terkunci oleh proses lain.
+Kita akan hapus node_modules dan install ulang.
+
+========================================
+LANGKAH-LANGKAH:
+========================================
+
+1. RESTART KOMPUTER DULU
+   (Ini penting untuk release semua file locks)
+
+2. Setelah restart, buka Command Prompt
+
+3. Navigate ke project:
+   cd D:\coding\template
+
+4. Hapus node_modules dan .next:
+   rmdir /s /q node_modules
+   rmdir /s /q .next
+
+5. Install ulang:
+   npm install
+
+6. Start server:
+   npm run dev
+
+========================================
+ATAU GUNAKAN COMMAND INI (Copy Paste):
+========================================
+
+cd D:\coding\template && rmdir /s /q node_modules && rmdir /s /q .next && npm install && npm run dev
+
+========================================
+JIKA npm install JUGA ERROR:
+========================================
+
+Kemungkinan antivirus atau Windows Defender mengunci file.
+
+SOLUSI:
+1. Buka Windows Security
+2. Virus & threat protection
+3. Manage settings
+4. Tambahkan folder D:\coding\template ke Exclusions
+5. Restart komputer
+6. Coba lagi
+
+========================================
+ALTERNATIF: PINDAH PROJECT KE FOLDER LAIN
+========================================
+
+Jika masih error, coba pindah project:
+
+1. Copy folder D:\coding\template
+2. Paste ke lokasi lain, misal: C:\Projects\template
+3. Buka Command Prompt
+4. cd C:\Projects\template
+5. rmdir /s /q node_modules
+6. rmdir /s /q .next
+7. npm install
+8. npm run dev
+
+========================================
+INSTALL PWA (Setelah server running):
+========================================
+
+1. Buka http://localhost:3000 di Chrome/Edge
+2. Login
+3. Tunggu 3-5 detik
+4. Klik banner "Install"
+5. SELESAI!
+
+========================================

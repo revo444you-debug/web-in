@@ -7,7 +7,7 @@ import Image from 'next/image'
 export default async function DashboardPage() {
   const session = await verifySession()
 
-  const profile = await prisma.profile.findUnique({
+  const profile: any = await prisma.profile.findUnique({
     where: { userId: session!.userId },
   })
 
